@@ -168,14 +168,14 @@ def eval_blanc(tasks=ALL_TASKS, device='cuda:0', batch_size=64):
     evaluator.evaluate()
     timer.finish(f"BLANC")
 
-def eval_summac(tasks=ALL_TASKS, summac_type='conv', device='cuda:0'):
-    summac = SummaCScorer(summac_type=summac_type, device=device)
-    evaluator = Evaluator(eval_tasks=tasks, align_func=summac.scorer, save_all_tables=SAVE_ALL_TABLES)
-    evaluator.result_save_name = f"baselines/SummaC-{summac_type}"
+# def eval_summac(tasks=ALL_TASKS, summac_type='conv', device='cuda:0'):
+#     summac = SummaCScorer(summac_type=summac_type, device=device)
+#     evaluator = Evaluator(eval_tasks=tasks, align_func=summac.scorer, save_all_tables=SAVE_ALL_TABLES)
+#     evaluator.result_save_name = f"baselines/SummaC-{summac_type}"
     
-    timer = Timer()
-    evaluator.evaluate()
-    timer.finish(f"SummaC-{summac_type}")
+#     timer = Timer()
+#     evaluator.evaluate()
+#     timer.finish(f"SummaC-{summac_type}")
 
 def eval_align_nlg(ckpt_path, comment='', base_model='roberta-large', batch_size=32, device='cuda:0', tasks=ALL_TASKS, nlg_eval_mode='nli_sp'):
     align = Inferencer(ckpt_path=ckpt_path, model=base_model, batch_size=batch_size, device=device)
@@ -222,7 +222,7 @@ def eval_chatgptshiqichen2023(api_key, chat_model='gpt-3.5-turbo', tasks=['qags_
     chatgpt = ChatGPTShiqiChen2023Scorer(task=tasks, api_key=api_key, chat_model=chat_model)
     evaluator = Evaluator(eval_tasks=tasks, align_func=chatgpt.scorer, is_save_all_tables=IS_SAVE_ALL_TABLES)
     evaluator.result_save_name = f"nlg_eval_fact/baselines/ChatGPTShiqiChen2023-{chat_model}"
-        evaluator.evaluate()
+    evaluator.evaluate()
 
 def run_benchmarks(args, argugment_error):
     os.makedirs('exp_results/baselines', exist_ok=True)
@@ -321,11 +321,11 @@ def run_benchmarks(args, argugment_error):
             argugment_error('--blanc-batch-size must be specified to run BLANC baseline')
         eval_blanc(tasks=args.tasks, device=args.device, batch_size=args.blanc_batch_size)
 
-    if args.summac:
-        if not args.summac_type:
-            argugment_error('--summac-type must be specified to run SummaC baseline')
-        for type in args.summac_type:
-            eval_summac(tasks=args.tasks, device=args.device, summac_type=type)
+    # if args.summac:
+    #     if not args.summac_type:
+    #         argugment_error('--summac-type must be specified to run SummaC baseline')
+    #     for type in args.summac_type:
+    #         eval_summac(tasks=args.tasks, device=args.device, summac_type=type)
 
 
 if __name__ == "__main__": 

@@ -21,7 +21,7 @@ async def startup():
         verbose=False
     )
 
-@app.post('/')
+@app.post('/score_claim/')
 def score_claim(
     request: Request,
     contexts: List[str],

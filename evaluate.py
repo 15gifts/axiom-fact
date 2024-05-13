@@ -173,18 +173,18 @@ class Evaluator():
                         each_true_sub_name = 'true_' + '_'.join(each_true_sub.split('_')[:1])
 
                     self.dataset[each_true_sub_name] = pd.read_csv(os.path.join('data/eval/true', each_true_sub))
-            elif 'summac' == eval_task:
-                from summac.benchmark import SummaCBenchmark
-                self.summac_validation_set = dict()
-                summac_benchmark = SummaCBenchmark(benchmark_folder="./data/eval/summac/benchmark", cut='test')
-                for each in summac_benchmark.datasets:
-                    summac_dt_name = each['name']
-                    self.dataset['summac_'+summac_dt_name] = each['dataset']
+            # elif 'summac' == eval_task:
+            #     from summac.benchmark import SummaCBenchmark
+            #     self.summac_validation_set = dict()
+            #     summac_benchmark = SummaCBenchmark(benchmark_folder="./data/eval/summac/benchmark", cut='test')
+            #     for each in summac_benchmark.datasets:
+            #         summac_dt_name = each['name']
+            #         self.dataset['summac_'+summac_dt_name] = each['dataset']
 
-                summac_benchmark_valid = SummaCBenchmark(benchmark_folder="./data/eval/summac/benchmark", cut='val')
-                for each in summac_benchmark_valid.datasets:
-                    summac_dt_name = each['name']
-                    self.summac_validation_set['summac_'+summac_dt_name] = each['dataset']
+            #     summac_benchmark_valid = SummaCBenchmark(benchmark_folder="./data/eval/summac/benchmark", cut='val')
+            #     for each in summac_benchmark_valid.datasets:
+            #         summac_dt_name = each['name']
+            #         self.summac_validation_set['summac_'+summac_dt_name] = each['dataset']
             else:
                 f = open(f'data/eval/{eval_task}.json')
                 self.dataset[eval_task] = json.load(f)

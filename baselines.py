@@ -320,24 +320,24 @@ class DAEScorer():
 
         return return_score, return_score, return_score
 
-class SummaCScorer():
-    def __init__(self, summac_type='conv', device='cuda:0') -> None:
-        self.summac_type = summac_type
-        import os, sys
-        sys.path.append("baselines/summac")
-        from summac.model_summac import SummaCZS, SummaCConv
+# class SummaCScorer():
+#     def __init__(self, summac_type='conv', device='cuda:0') -> None:
+#         self.summac_type = summac_type
+#         import os, sys
+#         sys.path.append("baselines/summac")
+#         from summac.model_summac import SummaCZS, SummaCConv
 
-        if summac_type == 'conv':
-            self.model = SummaCConv(models=["vitc"], bins='percentile', granularity="sentence", nli_labels="e", device=device, start_file="default", agg="mean")
-        elif summac_type == 'zs':
-            self.model = SummaCZS(granularity="sentence", model_name="vitc", device=device) # If you have a GPU: switch to: device="cuda"
+#         if summac_type == 'conv':
+#             self.model = SummaCConv(models=["vitc"], bins='percentile', granularity="sentence", nli_labels="e", device=device, start_file="default", agg="mean")
+#         elif summac_type == 'zs':
+#             self.model = SummaCZS(granularity="sentence", model_name="vitc", device=device) # If you have a GPU: switch to: device="cuda"
     
-    def scorer(self, premise, hypo):
-        assert len(premise) == len(hypo)
-        scores = self.model.score(premise, hypo)['scores']
-        return_score = torch.tensor(scores)
+#     def scorer(self, premise, hypo):
+#         assert len(premise) == len(hypo)
+#         scores = self.model.score(premise, hypo)['scores']
+#         return_score = torch.tensor(scores)
 
-        return return_score, return_score, return_score
+#         return return_score, return_score, return_score
 
 class FactCCScorer():
     def __init__(self, script_path, test_data_path,result_path) -> None:
