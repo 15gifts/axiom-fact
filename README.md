@@ -195,6 +195,10 @@ The following table shows the links to the evaluation datasets mentioned in the 
 | FRANK-CNNDM       | https://github.com/artidoro/frank                            |
 | SamSum            | https://github.com/skgabriel/GoFigure/blob/main/human_eval/samsum.jsonl |
 
+## Note on Summac
+Summac has a strict version limitation for huggingface-hub which would interfere with moving to transformers >4.37.x. 
+This latter version is needed to avoid deprecated torch methods. Therefore, summac evaluation is removed for the time being.
+
 # Citation
 If you find the metric and this repo helpful, please consider cite:
 ```
