@@ -11,7 +11,7 @@ from dataclasses import dataclass
 
 
 class BERTAlignModel(pl.LightningModule):
-    def __init__(self, model='bert-base-uncased', using_pretrained=True, *args, **kwargs) -> None:
+    def __init__(self, model='bert-base-uncased', add_pooling_layer=False, using_pretrained=True, *args, **kwargs) -> None:
         super().__init__()
         # Already defined in lightning: self.device
         self.save_hyperparameters()
@@ -24,8 +24,10 @@ class BERTAlignModel(pl.LightningModule):
             
         elif 'roberta' in model:
             if using_pretrained:
-                self.base_model = RobertaModel.from_pretrained(model)
-                self.mlm_head = RobertaForMaskedLM.from_pretrained(model).lm_head
+                base_model_config = AutoConfig.from_pretrained(model)
+                self.base_model = RobertaModel(config=base_model_config, add_pooling_layer=add_pooling_layer)
+                #self.base_model = RobertaModel.from_pretrained(model)
+                self.mlm_head = RobertaForMaskedLM(config=base_model_config, add_pooling_layer=add_pooling_layer).lm_head
             else:
                 self.base_model = RobertaModel(AutoConfig.from_pretrained(model))
                 self.mlm_head = RobertaForMaskedLM(AutoConfig.from_pretrained(model)).lm_head
