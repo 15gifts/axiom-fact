@@ -24,13 +24,11 @@ class BERTAlignModel(pl.LightningModule):
             
         elif 'roberta' in model:
             if using_pretrained:
-                base_model_config = AutoConfig.from_pretrained(model)
-                self.base_model = RobertaModel(config=base_model_config, add_pooling_layer=add_pooling_layer)
-                #self.base_model = RobertaModel.from_pretrained(model)
-                self.mlm_head = RobertaForMaskedLM(config=base_model_config, add_pooling_layer=add_pooling_layer).lm_head
+                self.base_model = RobertaModel.from_pretrained(model)
+                self.mlm_head = RobertaForMaskedLM.from_pretrained(model).lm_head
             else:
-                self.base_model = RobertaModel(AutoConfig.from_pretrained(model))
-                self.mlm_head = RobertaForMaskedLM(AutoConfig.from_pretrained(model)).lm_head
+                self.base_model = RobertaModel(AutoConfig.from_pretrained(model), add_pooling_layer=add_pooling_layer)
+                self.mlm_head = RobertaForMaskedLM(AutoConfig.from_pretrained(model), add_pooling_layer=add_pooling_layer).lm_head
             
         elif 'albert' in model:
             if using_pretrained:

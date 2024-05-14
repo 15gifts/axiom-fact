@@ -13,7 +13,8 @@ app = FastAPI()
 async def startup():
     logger = configure_logger()
     app.logger = logger
-    logger.info(f"🎉 Starting up the application")
+    logger.info(f"✨\tStarting up the application")
+    logger.debug(f"🔧\tLoading the AlignScore model from 'models/AlignScore-base.ckpt'")
     app.scorer = AlignScore(
         model='roberta-base',
         batch_size=32,
@@ -22,6 +23,7 @@ async def startup():
         evaluation_mode='nli_sp',
         verbose=False
     )
+    logger.info(f"🎉\tFACT application is ready to receive requests.")
 
 @app.post('/run_fact')
 def score_claim(
@@ -31,7 +33,7 @@ def score_claim(
     logger = request.app.logger
     context = fact_checking_request.context
     claim = fact_checking_request.claim
-    logger.info(f'🔎 Received a request to fact-check the claim "{claim}" against the context "{context}"')
+    logger.info(f'🔎\tReceived a request to fact-check the claim "{claim}" against the context "{context}"')
     scores = request.app.scorer.score(contexts=[context], claims=[claim])
     return FactCheckingResponse(
         request=fact_checking_request,
