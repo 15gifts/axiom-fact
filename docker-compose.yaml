@@ -9,7 +9,7 @@ x-fcs-common: &fcs-common
   #   - .env
   volumes:
     - ./app:/code/app
-    - ./models:/code/models
+    #- ./models:/code/models
 
   working_dir: /code
 
