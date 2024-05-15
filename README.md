@@ -18,7 +18,10 @@ docker-compose up -d
 Press CTRL+C to terminate. 
 If the container has started successfully, it will be possible to access the app at the link <http://localhost:8800/docs>. 
 
-# AlignScore
+# AlignScore 
+#### Note:
+The info below is copied from the original AlignScore repo <https://github.com/yuh-zha/AlignScore>.
+
 This is the repository for AlignScore, a metric for automatic factual consistency evaluation of text pairs introduced in \
 [AlignScore: Evaluating Factual Consistency with a Unified Alignment Function](https://arxiv.org/abs/2305.16739) \
 Yuheng Zha, Yichi Yang, Ruichen Li and Zhiting Hu \
