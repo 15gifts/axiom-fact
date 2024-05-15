@@ -11,7 +11,8 @@ ENV PYTHONUNBUFFERED=1 \
   POETRY_VIRTUALENVS_CREATE=false \
   POETRY_CACHE_DIR='/var/cache/pypoetry' \
   POETRY_HOME='/usr/local' \
-  POETRY_VERSION=1.8.0
+  POETRY_VERSION=1.8.0 \
+  POETRY_REQUESTS_TIMEOUT=1000
 
 # -- Install curl
 RUN apt-get update \
