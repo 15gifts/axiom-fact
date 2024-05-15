@@ -27,8 +27,8 @@ COPY poetry.lock pyproject.toml /code/
 
 # install our dependencies
 RUN poetry config http-basic.aws aws $CODEARTIFACT_AUTH_TOKEN
-RUN poetry install
-#RUN --mount=type=cache,target=/root/.cache poetry install
+#RUN poetry install
+RUN --mount=type=cache,target=/root/.cache poetry install
 
 # Download the Spacy en_core_web_sm model
 RUN python -m spacy download en_core_web_sm
