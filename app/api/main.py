@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 
 from app import __version__ as app_version
 from app.alignscore import AlignScore
-from app.api.config import get_settings
+from app.api.config import Settings
 from app.api.logging.logger import configure_logger
 from app.api.request_model import FactCheckingRequest
 from app.api.response_model import FactCheckingResponse
@@ -16,7 +16,7 @@ app = FastAPI(title="FACT", version=app_version)
 async def startup():
     logger = configure_logger()
     app.logger = logger
-    settings = get_settings()
+    settings = Settings()
     logger.info("✨\tStarting up the application")
     logger.debug("🔧\tLoading the AlignScore model from 'models/AlignScore-base.ckpt'")
     app.scorer = AlignScore(
