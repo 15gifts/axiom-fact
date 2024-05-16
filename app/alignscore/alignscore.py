@@ -8,7 +8,7 @@ class AlignScore:
         self,
         model: str,
         batch_size: int,
-        device: int,
+        device: str,
         ckpt_path: str,
         evaluation_mode="nli_sp",
         verbose=True,

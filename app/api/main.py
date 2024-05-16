@@ -3,6 +3,7 @@ import os
 from fastapi import FastAPI, Request
 
 from app.alignscore import AlignScore
+from app.api.config import get_settings
 from app.api.logging.logger import configure_logger
 from app.api.request_model import FactCheckingRequest
 from app.api.response_model import FactCheckingResponse
@@ -14,13 +15,14 @@ app = FastAPI()
 async def startup():
     logger = configure_logger()
     app.logger = logger
+    settings = get_settings()
     logger.info("✨\tStarting up the application")
     logger.debug("🔧\tLoading the AlignScore model from 'models/AlignScore-base.ckpt'")
     app.scorer = AlignScore(
-        model="roberta-base",
+        model=settings.model_name,
         batch_size=32,
-        device="cpu",
-        ckpt_path=os.path.join("models/AlignScore-base.ckpt"),
+        device=settings.device,
+        ckpt_path=os.path.join(settings.path_to_model_checkpoint),
         evaluation_mode="nli_sp",
         verbose=False,
     )

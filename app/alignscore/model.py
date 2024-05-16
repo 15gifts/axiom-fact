@@ -34,7 +34,8 @@ class BERTAlignModel(pl.LightningModule):
         self.model = model
 
         if "muppet" in model:
-            assert using_pretrained == True, "Only support pretrained muppet!"
+            if not using_pretrained:
+                raise ValueError("Only support pretrained muppet!")
             self.base_model = RobertaModel.from_pretrained(model)
             self.mlm_head = RobertaForMaskedLM(
                 AutoConfig.from_pretrained(model)

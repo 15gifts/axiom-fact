@@ -11,7 +11,8 @@ import loguru
 from pythonjsonlogger import jsonlogger
 from typing_extensions import NotRequired
 
-# from app.config import AppExecutionEnv, Settings, get_settings
+from app.api.config import Settings, get_settings
+
 # from app.utils.misc import safe_json_dump
 
 
@@ -227,15 +228,15 @@ def configure_logger(environment: str = "local"):
 
     logger = loguru.logger
 
-    # settings = get_settings()
+    settings = get_settings()
 
     logger.configure(
         extra={
             "request_id": "",
-            # "meta": {
-            #     "env": environment,
-            #     "hostname": settings.hostname,
-            # },
+            "meta": {
+                "env": environment,
+                "hostname": settings.hostname,
+            },
         },
     )
 

@@ -2,8 +2,8 @@
 # FROM continuumio/miniconda3:24.3.0-0
 FROM continuumio/miniconda3:24.1.2-0
 
-# -- Fetch CodeArtifact details from the parent environment
-ARG CODEARTIFACT_AUTH_TOKEN
+# # -- Fetch CodeArtifact details from the parent environment
+# ARG CODEARTIFACT_AUTH_TOKEN
 
 # -- Ensure python logs are sent straight to the terminal in real time
 ENV PYTHONUNBUFFERED=1
