@@ -8,10 +8,7 @@ import sys
 from typing import Any, Dict, List, Literal, Protocol, TypeAlias, TypedDict
 
 import loguru
-from pythonjsonlogger import jsonlogger
 from typing_extensions import NotRequired
-
-from app.api.config import Settings, get_settings
 
 # from app.utils.misc import safe_json_dump
 
@@ -80,54 +77,6 @@ CONFIG_MAPPING: Dict[DeploymentType, List[LoggingConfig]] = {
         }
     ],
 }
-
-
-class UvicornJsonFormatter(jsonlogger.JsonFormatter):
-    """
-    Custom formatter for Uvicorn logs that outputs logs in JSON format. It's used for the few log messages that Uvicorn
-    outputs before we initialise our logging middleware which overtakes Uvicorn's own logging.
-    """
-
-    _cached_settings: Settings | None = None
-
-    @classmethod
-    def get_cached_settings(cls) -> Settings:
-        if cls._cached_settings is None:
-            cls._cached_settings = get_settings()
-        return cls._cached_settings
-
-    @classmethod
-    def update_settings(cls, new_settings: Settings):
-        cls._cached_settings = new_settings
-
-    def add_fields(
-        self,
-        log_record: Dict[str, Any],
-        record: logging.LogRecord,
-        message_dict: Dict[str, Any],
-    ):
-        super().add_fields(log_record, record, message_dict)
-
-        settings = self.get_cached_settings()
-
-        custom_log_record: JsonLogRecord = {
-            "date": record.created,
-            "env": settings.app_execution_env,
-            "hostname": settings.hostname,
-            "level": record.levelname.lower(),
-            "msg": record.message,
-            "pid": record.process,
-            "file": record.filename,
-            "function": record.funcName,
-            "line": record.lineno,
-            "exception": record.exc_text,
-        }
-
-        log_record.update(custom_log_record)
-
-        remove_extra_fields = ["color_message", "message"]
-        for field in remove_extra_fields:
-            log_record.pop(field, None)
 
 
 class HasDict(Protocol):
@@ -215,7 +164,7 @@ def patch_record(record: loguru.Record):
     record["extra"]["serialized"] = serialize_loguru_record(record)
 
 
-def configure_logger(environment: str = "local"):
+def configure_logger(environment: str = "local", hostname: str = ""):
     """
     This function configures the logger for the app. The logger is configured based on the environment.
     It will disable the uvicorn logs which we will replace with our own middleware during the app startup.
@@ -228,14 +177,12 @@ def configure_logger(environment: str = "local"):
 
     logger = loguru.logger
 
-    settings = get_settings()
-
     logger.configure(
         extra={
             "request_id": "",
             "meta": {
                 "env": environment,
-                "hostname": settings.hostname,
+                "hostname": hostname,
             },
         },
     )
