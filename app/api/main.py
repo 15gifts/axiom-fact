@@ -2,13 +2,14 @@ import os
 
 from fastapi import FastAPI, Request
 
+from app import __version__ as app_version
 from app.alignscore import AlignScore
 from app.api.config import get_settings
 from app.api.logging.logger import configure_logger
 from app.api.request_model import FactCheckingRequest
 from app.api.response_model import FactCheckingResponse
 
-app = FastAPI()
+app = FastAPI(title="FACT", version=app_version)
 
 
 @app.on_event("startup")
