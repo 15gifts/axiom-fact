@@ -1,7 +1,7 @@
 [tool.poetry]
-authors = ["Fab Trovato"] 
-description = "An API for the Axiom Fact Checking Service" 
-name = "axiom-fact-checking-service" 
+authors = ["Fabrizio Trovato", "Max Yousif"]
+description = "FACT - An API for the Axiom Fact Checking Service" 
+name = "FACT" 
 package-mode = false # we only want to use poetry for dependency management
 packages = []
 readme = "README.md"
