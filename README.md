@@ -5,9 +5,8 @@ This is FACT, an API that uses AlignScore to assess the factual consistency betw
 The recommended way to build the API is via docker, and the way to do so is by:
 1. Run the build script in the parent directory of the app
 ```shell
-./docker-build.sh
+./docker-build-conda.sh
 ```
-The script will automatically ask you to sign into the `user_nonlive_developer` role in `aws`, so please make sure you have access to that role before trying to run the build script.
 #### Note:
 To build the image, many heavy packages and models need to be downloaded. Please, be aware that building this image can take several minutes.
 
