@@ -9,8 +9,6 @@ ENV PYTHONUNBUFFERED=1
 RUN apt-get update \
     && apt-get install -y curl \
     && apt-get install -y --reinstall build-essential
-    # && apt-get install -y gcc \
-    # && apt-get install -y g++
 
 # -- Copy the conda environment file to the container
 WORKDIR /code
@@ -24,19 +22,13 @@ RUN conda update -n base conda \
     && conda install -n base conda-build \
     && conda config --set solver libmamba
 
-# -- Install packages not available in conda
-# RUN conda init bash \
-#     && . /root/.bashrc \
-#     && conda activate base \
-#     && pip install -r /tmp/requirements.txt
-
-RUN pip install -r /tmp/requirements.txt
+# -- Install packages via pip for now until conda is resolved
+RUN pip install -r /tmp/requirements.txt --timeout=600 --progress-bar=on
 
 # -- Download the Spacy en_core_web_sm model
 RUN python -m spacy download en_core_web_sm
 
 # -- Download the punkt model to speed up start time
-# RUN python -c "import nltk; nltk.download('punkt')"
 RUN python -m nltk.downloader punkt
 
 # -- Copy the application code
