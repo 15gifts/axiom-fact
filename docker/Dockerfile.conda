@@ -2,38 +2,34 @@
 # FROM continuumio/miniconda3:24.3.0-0
 FROM continuumio/miniconda3:24.1.2-0
 
-# -- Fetch CodeArtifact details from the parent environment
-ARG CODEARTIFACT_AUTH_TOKEN
-
 # -- Ensure python logs are sent straight to the terminal in real time
 ENV PYTHONUNBUFFERED=1
 
 # -- Install required libraries
 RUN apt-get update \
-    && apt-get install -y curl \
-    && apt-get install -y --reinstall build-essential
-    # && apt-get install -y gcc \
-    # && apt-get install -y g++
+    && apt-get install -y curl
 
 # -- Copy the conda environment file to the container
 WORKDIR /code
-COPY requirements.txt /tmp/requirements.txt
+COPY environment.yaml /tmp/environment.yaml
 
 # -- Make RUN commands use the base environment
 SHELL ["conda", "run", "-n", "base", "/bin/bash", "-c"]
 
 # -- Update the conda environment and set the solver to libmamba
-RUN conda update -n base conda \
-    && conda install -n base conda-build \
-    && conda config --set solver libmamba
+RUN conda clean --all --yes \
+    && conda update -n base conda \
+    && conda install -n base conda-build -c conda-forge \
+    && conda config --set solver libmamba \
+    # -- Increase read & connect timeouts for downloading large packages
+    && conda config --set remote_read_timeout_secs 300 \
+    && conda config --set remote_connect_timeout_secs 20
+
+# -- Log the current conda setup
+RUN conda info
 
 # -- Install packages not available in conda
-# RUN conda init bash \
-#     && . /root/.bashrc \
-#     && conda activate base \
-#     && pip install -r /tmp/requirements.txt
-
-RUN pip install -r /tmp/requirements.txt
+RUN conda env update -n base --file /tmp/environment.yaml -vv
 
 # -- Download the Spacy en_core_web_sm model
 RUN python -m spacy download en_core_web_sm
@@ -48,7 +44,7 @@ COPY ./app /code/app
 # -- Download the AlignScore base checkpoint
 RUN mkdir /code/models
 RUN cd /code/models && curl -OL https://huggingface.co/yzha/AlignScore/resolve/main/AlignScore-base.ckpt
-RUN python -m pytorch_lightning.utilities.upgrade_checkpoint /code/models/AlignScore-base.ckpt
+# RUN python -m pytorch_lightning.utilities.upgrade_checkpoint /code/models/AlignScore-base.ckpt
 RUN cd /code
 
 # -- Uncomment the line below to also download the large model
@@ -56,10 +52,6 @@ RUN cd /code
 # RUN cd /code/models && curl -OL https://huggingface.co/yzha/AlignScore/resolve/main/AlignScore-large.ckpt
 # RUN python -m pytorch_lightning.utilities.upgrade_checkpoint AlignScore-large.ckpt
 # RUN cd /code
-
-# -- Remove build essentials to reduce image size
-RUN rm -rf /var/lib/apt/lists/* \
-    && apt-get purge -y --auto-remove build-essential
 
 # -- Run the application
 CMD ["uvicorn", "--host", "0.0.0.0", "--port", "80", "--reload", "app.api.main:app", "--no-server-header"]
