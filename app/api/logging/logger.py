@@ -1,11 +1,11 @@
 # required for loguru types to work during runtime
 from __future__ import annotations
 
+import json
 import logging
 import os
 import sys
-import json
-from typing import Any, Dict, List, Literal, TypeAlias, TypedDict, Protocol
+from typing import Any, Dict, List, Literal, Protocol, TypeAlias, TypedDict
 
 import loguru
 from pythonjsonlogger import jsonlogger
@@ -128,8 +128,10 @@ class UvicornJsonFormatter(jsonlogger.JsonFormatter):
         for field in remove_extra_fields:
             log_record.pop(field, None)
 
+
 class HasDict(Protocol):
     __dict__: Dict[str, Any]
+
 
 def object_to_dict(obj: HasDict) -> Dict[str, Any]:
     """
@@ -142,6 +144,7 @@ def object_to_dict(obj: HasDict) -> Dict[str, Any]:
         if not key.startswith("_") and not callable(value)
     }
 
+
 def safe_json_dump(data: Any) -> str:
     """Safe version of json.dumps that handles non-serializable objects."""
     return json.dumps(
@@ -150,6 +153,7 @@ def safe_json_dump(data: Any) -> str:
         if not isinstance(o, type)
         else f"<non-serializable: {type(o).__qualname__}>",
     )
+
 
 def get_deployment_type(environment: str) -> DeploymentType:
     """
@@ -223,7 +227,7 @@ def configure_logger(environment: str = "local"):
 
     logger = loguru.logger
 
-    #settings = get_settings()
+    # settings = get_settings()
 
     logger.configure(
         extra={
