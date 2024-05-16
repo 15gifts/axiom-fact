@@ -1,4 +1,5 @@
 from logging import warning
+from typing import List, Tuple
 
 import spacy
 import torch
@@ -13,11 +14,11 @@ from .model import BERTAlignModel
 class Inferencer:
     def __init__(
         self,
-        ckpt_path,
-        model="bert-base-uncased",
-        batch_size=32,
-        device="cuda",
-        verbose=True,
+        ckpt_path: str,
+        model: str = "bert-base-uncased",
+        batch_size: int = 32,
+        device: str = "cuda",
+        verbose: bool = True,
     ) -> None:
         self.device = device
         if ckpt_path is not None:
@@ -47,7 +48,9 @@ class Inferencer:
         self.nlg_eval_mode = None  # bin, bin_sp, nli, nli_sp
         self.verbose = verbose
 
-    def inference_example_batch(self, premise: list, hypo: list):
+    def inference_example_batch(
+        self, contexts: List[str], claims: List[str]
+    ) -> Tuple[None, torch.Tensor, None]:
         """
         inference a example,
         premise: list
@@ -57,15 +60,15 @@ class Inferencer:
         SummaC Style aggregation
         """
         self.disable_progress_bar_in_inference = True
-        assert len(premise) == len(
-            hypo
+        assert len(contexts) == len(
+            claims
         ), "Premise must has the same length with Hypothesis!"
 
         out_score = []
         for one_pre, one_hypo in tqdm(
-            zip(premise, hypo),
+            zip(contexts, claims),
             desc="Evaluating",
-            total=len(premise),
+            total=len(contexts),
             disable=(not self.verbose),
         ):
             out_score.append(self.inference_per_example(one_pre, one_hypo))
@@ -392,21 +395,23 @@ class Inferencer:
         for i in range(0, len(lst), n):
             yield lst[i : i + n]
 
-    def nlg_eval(self, premise, hypo):
+    def nlg_eval(
+        self, contexts: List[str], claims: List[str]
+    ) -> Tuple[None, torch.Tensor, None]:
         assert self.nlg_eval_mode is not None, "Select NLG Eval mode!"
         if (
             (self.nlg_eval_mode == "bin")
             or (self.nlg_eval_mode == "nli")
             or (self.nlg_eval_mode == "reg")
         ):
-            return self.inference(premise, hypo)
+            return self.inference(contexts, claims)
 
         elif (
             (self.nlg_eval_mode == "bin_sp")
             or (self.nlg_eval_mode == "nli_sp")
             or (self.nlg_eval_mode == "reg_sp")
         ):
-            return self.inference_example_batch(premise, hypo)
+            return self.inference_example_batch(contexts, claims)
 
         else:
             ValueError("Unrecognized NLG Eval mode!")

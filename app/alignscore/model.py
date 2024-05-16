@@ -22,9 +22,9 @@ from transformers import (
 class BERTAlignModel(pl.LightningModule):
     def __init__(
         self,
-        model="bert-base-uncased",
-        add_pooling_layer=False,
-        using_pretrained=True,
+        model: str = "bert-base-uncased",
+        add_pooling_layer: bool = False,
+        using_pretrained: bool = True,
         *args,
         **kwargs,
     ) -> None:
