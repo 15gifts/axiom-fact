@@ -14,16 +14,16 @@ app = FastAPI(title="FACT", version=app_version)
 
 @app.on_event("startup")
 async def startup():
-    logger = configure_logger()
+    app.settings = Settings()
+    logger = configure_logger(hostname=app.settings.hostname)
     app.logger = logger
-    settings = Settings()
     logger.info("✨\tStarting up the application")
     logger.debug("🔧\tLoading the AlignScore model from 'models/AlignScore-base.ckpt'")
     app.scorer = AlignScore(
-        model=settings.model_name,
+        model=app.settings.bert_model_name,
         batch_size=32,
-        device=settings.device,
-        ckpt_path=os.path.join(settings.path_to_model_checkpoint),
+        device=app.settings.device,
+        ckpt_path=os.path.join(app.settings.path_to_model_checkpoint),
         evaluation_mode="nli_sp",
         verbose=False,
     )
