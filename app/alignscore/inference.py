@@ -1,52 +1,69 @@
 from logging import warning
-from typing import List, Tuple
+from typing import (
+    List,
+    Optional,
+    Tuple,
+)
 
 import spacy
 import torch
 import torch.nn as nn
 from nltk.tokenize import sent_tokenize
 from tqdm import tqdm
-from transformers import AutoConfig, AutoTokenizer
+from transformers import (
+    AutoConfig,
+    AutoTokenizer,
+)
 
-from .model import BERTAlignModel
+from app.alignscore.model import BERTAlignModel
+from app.api.logging.logger import get_logger
+
+logger = get_logger()
 
 
 class Inferencer:
     def __init__(
         self,
-        ckpt_path: str,
+        ckpt_path: Optional[str] = None,
         model: str = "bert-base-uncased",
         batch_size: int = 32,
-        device: str = "cuda",
         verbose: bool = True,
     ) -> None:
-        self.device = device
+        self.device = torch.device(
+            "cuda"
+            if torch.cuda.is_available()
+            else "mps"
+            if torch.backends.mps.is_available()
+            else "cpu"
+        )
+        logger.info(f"Using device: {self.device}")
         if ckpt_path is not None:
-            self.model = (
-                BERTAlignModel(model=model)
-                .load_from_checkpoint(checkpoint_path=ckpt_path, strict=False)
-                .to(self.device)
-            )
+            self.model = BERTAlignModel.load_from_checkpoint(
+                model=model,
+                checkpoint_path=ckpt_path,
+                strict=False,
+            ).to(self.device)
         else:
-            warning("loading UNTRAINED model!")
+            logger.warning(f"Loading untrained model {model}")
             self.model = BERTAlignModel(model=model).to(self.device)
+
         self.model.eval()
         self.batch_size = batch_size
-
-        self.config = AutoConfig.from_pretrained(model)
-        self.tokenizer = AutoTokenizer.from_pretrained(model)
+        self.config = AutoConfig.from_pretrained(
+            pretrained_model_name_or_path=model,
+        )
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            pretrained_model_name_or_path=model,
+        )
         self.spacy = spacy.load("en_core_web_sm")
-
+        logger.info("Loaded spacy model & data")
         self.loss_fct = nn.CrossEntropyLoss(reduction="none")
         self.softmax = nn.Softmax(dim=-1)
-
         self.smart_type = "smart-n"
         self.smart_n_metric = "f1"
-
         self.disable_progress_bar_in_inference = False
-
-        self.nlg_eval_mode = None  # bin, bin_sp, nli, nli_sp
-        self.verbose = verbose
+        self.nlg_eval_mode: Optional[str] = None  # bin, bin_sp, nli, nli_sp
+        self.verbose: bool = verbose
 
     def inference_example_batch(
         self, contexts: List[str], claims: List[str]

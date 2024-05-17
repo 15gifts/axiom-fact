@@ -1,6 +1,6 @@
 from typing import List
 
-from .inference import Inferencer
+from app.alignscore.inference import Inferencer
 
 
 class AlignScore:
@@ -8,16 +8,14 @@ class AlignScore:
         self,
         model: str,
         batch_size: int,
-        device: str,
         ckpt_path: str,
-        evaluation_mode="nli_sp",
-        verbose=True,
+        evaluation_mode: str = "nli_sp",
+        verbose: bool = True,
     ) -> None:
         self.model = Inferencer(
             ckpt_path=ckpt_path,
             model=model,
             batch_size=batch_size,
-            device=device,
             verbose=verbose,
         )
         self.model.nlg_eval_mode = evaluation_mode
