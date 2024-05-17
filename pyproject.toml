@@ -1,7 +1,7 @@
 [tool.poetry]
-authors = ["Fab Trovato"] 
-description = "An API for the Axiom Fact Checking Service" 
-name = "axiom-fact-checking-service" 
+authors = ["Fabrizio Trovato", "Max Yousif"]
+description = "FACT - An API for the Axiom Fact Checking Service" 
+name = "FACT" 
 package-mode = false # we only want to use poetry for dependency management
 packages = []
 readme = "README.md"
@@ -12,10 +12,10 @@ build-backend = "hatchling.build"
 
 [tool.poetry.dependencies]
 BLEURT = { git = "https://github.com/google-research/bleurt", rev="cebe7e6f996b40910cfaa520a63db47807e3bf5c"}
-spacy = ">=3.4.0,<4"
+spacy = ">=3.4.0"
 nltk = ">=3.7,<4"
 torch = ">=1.12.1, <=2.2.0"
-transformers = ">=4.20.1,<5"
+transformers = ">=4.37.0,<5"
 tqdm = ">=4.64.0,<5"
 jsonlines = ">=2.0.0,<3"
 numpy = ">=1.23.1,<2"
@@ -27,13 +27,17 @@ tensorboard = ">=2.12.0,<3"
 tensorflow = ">=2.15.0"
 python = "~3.12"
 protobuf = ">=3.20.3,<4.21.0"
+python-json-logger = ">=2.0.7,<3.0.0"
 ctc_score = "0.1.3"
 bert_score = "0.3.11"
 rake_nltk = "1.0.6"
 summa = "1.2.0"
 benepar = "0.2.0"
-summac = "^0.0.4"
 tabulate = ">=0.9.0,<1"
+fastapi = "^0.86.0"
+huggingface-hub = "<0.23.0"
+uvicorn = ">=0.12.0,<0.19.0"
+loguru = ">=0.7.2"
 
 [project]
 name = "alignscore"

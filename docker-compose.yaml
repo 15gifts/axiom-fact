@@ -1,0 +1,24 @@
+# This is intended to be used to run the fact checking service API locally
+# Please do not use this file to deploy the app remotely
+
+version: "3"
+
+x-fcs-common: &fact-common
+  image: fact-api:local
+  volumes:
+    - ./app:/code/app
+
+  working_dir: /code
+
+services:
+  fcs:
+    container_name: fact-api
+    <<: *fact-common
+    ports:
+      - 8800:80
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        

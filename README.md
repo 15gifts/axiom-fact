@@ -1,4 +1,26 @@
-# AlignScore
+# FACT (Fact-checking Assessment for Contextual Truth) 
+This is FACT, an API that uses AlignScore to assess the factual consistency between a claim and a given context. 
+
+## Starting via docker
+The recommended way to build the API is via docker, and the way to do so is by:
+1. Run the build script in the parent directory of the app
+```shell
+./docker-build-conda.sh
+```
+#### Note:
+To build the image, many heavy packages and models need to be downloaded. Please, be aware that building this image can take several minutes.
+
+2. Spin up the container
+```shell
+docker-compose up -d
+```
+Press CTRL+C to terminate. 
+If the container has started successfully, it will be possible to access the app at the link <http://localhost:8800/docs>. 
+
+# AlignScore 
+#### Note:
+The info below is copied from the original AlignScore repo <https://github.com/yuh-zha/AlignScore>.
+
 This is the repository for AlignScore, a metric for automatic factual consistency evaluation of text pairs introduced in \
 [AlignScore: Evaluating Factual Consistency with a Unified Alignment Function](https://arxiv.org/abs/2305.16739) \
 Yuheng Zha, Yichi Yang, Ruichen Li and Zhiting Hu \
@@ -194,6 +216,10 @@ The following table shows the links to the evaluation datasets mentioned in the 
 | FRANK-XSum        | https://github.com/artidoro/frank                            |
 | FRANK-CNNDM       | https://github.com/artidoro/frank                            |
 | SamSum            | https://github.com/skgabriel/GoFigure/blob/main/human_eval/samsum.jsonl |
+
+## Note on Summac
+Summac has a strict version limitation for huggingface-hub which would interfere with moving to transformers >4.37.x. 
+This latter version is needed to avoid deprecated torch methods. Therefore, summac evaluation is removed for the time being.
 
 # Citation
 If you find the metric and this repo helpful, please consider cite:

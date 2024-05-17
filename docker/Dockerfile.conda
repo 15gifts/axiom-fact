@@ -1,0 +1,54 @@
+# -- Pull the miniconda3 image for the python 3.11/12 version
+# FROM continuumio/miniconda3:24.3.0-0
+FROM continuumio/miniconda3:24.1.2-0
+
+# -- Ensure python logs are sent straight to the terminal in real time
+ENV PYTHONUNBUFFERED=1
+
+# -- Install required libraries
+RUN apt-get update \
+    && apt-get install -y curl \
+    && apt-get install -y --reinstall build-essential
+
+# -- Copy the conda environment file to the container
+WORKDIR /code
+COPY requirements.txt /tmp/requirements.txt
+
+# -- Make RUN commands use the base environment
+SHELL ["conda", "run", "-n", "base", "/bin/bash", "-c"]
+
+# -- Update the conda environment and set the solver to libmamba
+RUN conda update -n base conda \
+    && conda install -n base conda-build \
+    && conda config --set solver libmamba
+
+# -- Install packages via pip for now until conda is resolved
+RUN pip install -r /tmp/requirements.txt --timeout=600 --progress-bar=on
+
+# -- Download the Spacy en_core_web_sm model
+RUN python -m spacy download en_core_web_sm
+
+# -- Download the punkt model to speed up start time
+RUN python -m nltk.downloader punkt
+
+# -- Copy the application code
+COPY ./app /code/app
+
+# -- Download the AlignScore base checkpoint
+RUN mkdir /code/models
+RUN cd /code/models && curl -OL https://huggingface.co/yzha/AlignScore/resolve/main/AlignScore-base.ckpt
+RUN python -m pytorch_lightning.utilities.upgrade_checkpoint /code/models/AlignScore-base.ckpt
+RUN cd /code
+
+# -- Uncomment the line below to also download the large model
+# RUN mkdir /code/models
+# RUN cd /code/models && curl -OL https://huggingface.co/yzha/AlignScore/resolve/main/AlignScore-large.ckpt
+# RUN python -m pytorch_lightning.utilities.upgrade_checkpoint AlignScore-large.ckpt
+# RUN cd /code
+
+# -- Remove build essentials to reduce image size
+RUN rm -rf /var/lib/apt/lists/* \
+    && apt-get purge -y --auto-remove build-essential
+
+# -- Run the application
+CMD ["uvicorn", "--host", "0.0.0.0", "--port", "80", "--reload", "app.api.main:app", "--no-server-header"]
