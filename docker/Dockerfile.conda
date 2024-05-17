@@ -25,11 +25,9 @@ RUN conda clean --all --yes \
     && conda config --set remote_connect_timeout_secs 20 \
     && conda config --set remote_max_retries 5
 
-# -- Log the current conda setup
-RUN conda info
-
-# -- Install packages not available in conda
-RUN conda env update -n base --file /tmp/environment.yaml -vv
+# -- Install packages & clean up
+RUN conda env update -n base --file /tmp/environment.yaml -vv \
+    && conda clean --all --yes
 
 # -- Download the Spacy en_core_web_sm model
 RUN python -m spacy download en_core_web_sm
