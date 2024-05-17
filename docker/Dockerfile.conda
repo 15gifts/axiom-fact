@@ -1,6 +1,6 @@
 # -- Pull the miniconda3 image for the python 3.11/12 version
-# FROM continuumio/miniconda3:24.3.0-0
-FROM continuumio/miniconda3:24.1.2-0
+# FROM continuumio/miniconda3:24.1.2-0
+FROM continuumio/miniconda3:23.10.0-1
 
 # -- Ensure python logs are sent straight to the terminal in real time
 ENV PYTHONUNBUFFERED=1
@@ -23,7 +23,8 @@ RUN conda clean --all --yes \
     && conda config --set solver libmamba \
     # -- Increase read & connect timeouts for downloading large packages
     && conda config --set remote_read_timeout_secs 300 \
-    && conda config --set remote_connect_timeout_secs 20
+    && conda config --set remote_connect_timeout_secs 20 \
+    && conda config --set remote_max_retries 5
 
 # -- Log the current conda setup
 RUN conda info
@@ -44,7 +45,7 @@ COPY ./app /code/app
 # -- Download the AlignScore base checkpoint
 RUN mkdir /code/models
 RUN cd /code/models && curl -OL https://huggingface.co/yzha/AlignScore/resolve/main/AlignScore-base.ckpt
-# RUN python -m pytorch_lightning.utilities.upgrade_checkpoint /code/models/AlignScore-base.ckpt
+RUN python -m pytorch_lightning.utilities.upgrade_checkpoint /code/models/AlignScore-base.ckpt
 RUN cd /code
 
 # -- Uncomment the line below to also download the large model
