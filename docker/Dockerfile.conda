@@ -1,6 +1,5 @@
-# -- Pull the miniconda3 image for the python 3.11/12 version
-# FROM continuumio/miniconda3:24.1.2-0
-FROM continuumio/miniconda3:23.10.0-1
+# -- Pull the miniconda3 image for the python 3.11 version
+FROM --platform=linux/amd64 continuumio/miniconda3:24.1.2-0
 
 # -- Ensure python logs are sent straight to the terminal in real time
 ENV PYTHONUNBUFFERED=1
@@ -44,11 +43,10 @@ COPY ./app /code/app
 # -- Download the AlignScore base checkpoint
 RUN mkdir /code/models
 RUN cd /code/models && curl -OL https://huggingface.co/yzha/AlignScore/resolve/main/AlignScore-base.ckpt
-RUN python -m pytorch_lightning.utilities.upgrade_checkpoint /code/models/AlignScore-base.ckpt
+RUN python -m pytorch_lightning.utilities.upgrade_checkpoint /code/models/AlignScore-base.ckpt && rm /code/models/AlignScore-base.bak
 RUN cd /code
 
 # -- Uncomment the line below to also download the large model
-# RUN mkdir /code/models
 # RUN cd /code/models && curl -OL https://huggingface.co/yzha/AlignScore/resolve/main/AlignScore-large.ckpt
 # RUN python -m pytorch_lightning.utilities.upgrade_checkpoint AlignScore-large.ckpt
 # RUN cd /code
