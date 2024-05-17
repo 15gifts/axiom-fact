@@ -18,11 +18,12 @@ async def startup():
     logger = configure_logger(hostname=app.settings.hostname)
     app.logger = logger
     logger.info("✨\tStarting up the application")
-    logger.debug("🔧\tLoading the AlignScore model from 'models/AlignScore-base.ckpt'")
+    logger.debug(
+        f"🔧\tLoading the AlignScore model from {app.settings.path_to_model_checkpoint}"
+    )
     app.scorer = AlignScore(
         model=app.settings.bert_model_name,
         batch_size=32,
-        device=app.settings.device,
         ckpt_path=os.path.join(app.settings.path_to_model_checkpoint),
         evaluation_mode="nli_sp",
         verbose=False,
