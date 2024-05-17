@@ -6,18 +6,16 @@ channels:
   - defaults
 dependencies:
   - python=3.11
-  - conda-forge::datasets>=2.3.2,<3
-  - conda-forge::nltk>=3.7,<4
-  - conda-forge::numpy>=1.23.1,<2
-  - conda-forge::pytorch-lightning>=1.7.7,<2
-  - conda-forge::scikit-learn>=1.1.2,<2
-  - conda-forge::spacy>=3.4.0,<4
-  # - pytorch::pytorch>=1.12.1
-  # - pytorch::pytorch-cuda=11.8
-  - conda-forge::transformers>=4.20.1,<5
+  - conda-forge::datasets==2.19.1
+  - conda-forge::nltk==3.8.1
+  - conda-forge::numpy==1.26.4
+  - conda-forge::pytorch-lightning==2.2.2
+  - conda-forge::scikit-learn==1.4.2
+  - conda-forge::spacy==3.7.3
+  - pytorch::pytorch==2.2.2
+  - pytorch::pytorch-cuda=11.8
+  - conda-forge::transformers==4.40.2
   - pip:
-    - --extra-index-url https://download.pytorch.org/whl/cu118
-    - torch>=1.12.1
     - fastapi>=0.86.0
     - loguru>=0.7.2
     - python-json-logger>=2.0.7,<3.0.0
