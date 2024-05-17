@@ -3,30 +3,22 @@
 
 version: "3"
 
-x-fcs-common: &fcs-common
-  image: axiom-fact-checking-service-api:local
-  # env_file:
-  #   - .env
+x-fcs-common: &fact-common
+  image: fact-api:local
   volumes:
     - ./app:/code/app
-    - ./models:/code/models
 
   working_dir: /code
 
 services:
   fcs:
-    container_name: axiom-fact-checking-service-api
-    <<: *fcs-common
+    container_name: fact-api
+    <<: *fact-common
     ports:
       - 8800:80
-    command: uvicorn --host 0.0.0.0 --port 80 --reload app.api.main:app --no-server-header
     deploy:
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-
-# networks:
-#   default:
-#     name: platform-services_default
-#     external: true
+        

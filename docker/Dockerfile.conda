@@ -36,7 +36,6 @@ RUN conda env update -n base --file /tmp/environment.yaml -vv
 RUN python -m spacy download en_core_web_sm
 
 # -- Download the punkt model to speed up start time
-# RUN python -c "import nltk; nltk.download('punkt')"
 RUN python -m nltk.downloader punkt
 
 # -- Copy the application code
